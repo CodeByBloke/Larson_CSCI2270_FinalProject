@@ -10,7 +10,7 @@ Board::Board(int firstPlayer) {
 }
 
 void Board::initalizeBoard() {
-    for(int i = 0; i < rows; ++i) {
+    for(int i = 0; i < rows; ++i) { // Create a vector of vectors ot store the board
         vector<Space*> column;
         for(int j = 0; j < columns; ++j) {
             column.push_back(new Space(0));
@@ -21,11 +21,11 @@ void Board::initalizeBoard() {
 }
 
 int Board::getSpaceValue(int row, int column) {
-    return board[row][column]->value;
+    return board[row][column]->value; // Get the value at a row and column in the baord representation
 }
 
 char Board::getSpaceCharacter(int row, int column) {
-    int value = getSpaceValue(row, column);
+    int value = getSpaceValue(row, column); // Get the character at the row and column
     if(value == 0) {
         return '_';
     } else if(value == 1) {
@@ -35,8 +35,8 @@ char Board::getSpaceCharacter(int row, int column) {
     }
 }
 
-void Board::outputBoard() {
-    cout<<"Current Board:"<<endl;
+void Board::outputBoard() { // This method outputs a visual representation of the board
+    cout<<"Current Board:"<<endl; 
     cout<<" ------------"<<endl;
     cout<<" |   1 2 3  |"<<endl;
     for(int i = 0; i < rows; ++i) {
@@ -52,7 +52,7 @@ void Board::outputBoard() {
 }
 
 void Board::setSpaceValue(int row, int column, char playerToken) {
-    int playerID;
+    int playerID; // Set the value of a row and column of the vector based on the token
     if(playerToken == 'X') {
         playerID = 1;
     } else if(playerToken == 'O') {
@@ -74,12 +74,12 @@ bool Board::isWinner(char playerToken) {
         return false;
     }
 
-    for(int i = 0; i < 8; ++i) {
-        int value1 = board[winningCombinations[i][0][0]][winningCombinations[i][0][1]]->value;
+    for(int i = 0; i < 8; ++i) { // Loop through the 8 possible winning conditions
+        int value1 = board[winningCombinations[i][0][0]][winningCombinations[i][0][1]]->value; 
         int value2 = board[winningCombinations[i][1][0]][winningCombinations[i][1][1]]->value;
         int value3 = board[winningCombinations[i][2][0]][winningCombinations[i][2][1]]->value;
         if((playerID == value1) && (playerID == value2) && (playerID == value3)) {
-            return true;
+            return true; // Return win if the 3 spaces have the appropriate token
         }
     }
 
@@ -88,9 +88,9 @@ bool Board::isWinner(char playerToken) {
 
 vector<vector<int>> Board::getPossibleMoves(vector<vector<int>> movesMade) {
     vector<vector<int>> possibleMoves; 
-    for(int i = 0; i < rows; ++i) {
-        for(int j = 0; j < columns; ++j) {
-            if(board[i][j]->value == 0 && !moveInMoveList(i, j, movesMade)) {
+    for(int i = 0; i < rows; ++i) { // Loop through the rows
+        for(int j = 0; j < columns; ++j) { // Loop through the columns
+            if(board[i][j]->value == 0 && !moveInMoveList(i, j, movesMade)) { // Check to see if the current space is empty
                 vector<int> move;
                 move.push_back(i);
                 move.push_back(j);
@@ -103,7 +103,7 @@ vector<vector<int>> Board::getPossibleMoves(vector<vector<int>> movesMade) {
 }
 
 bool Board::moveInMoveList(int row, int column, vector<vector<int>> moveList) {
-    for(int i = 0; i < moveList.size(); ++i) {
+    for(int i = 0; i < moveList.size(); ++i) { // Check to see if a move is in the move list
         if(row == moveList[i][0] && column == moveList[i][1]) {
             return true;
         }
