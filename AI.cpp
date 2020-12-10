@@ -20,16 +20,53 @@ void Move_Tree::compressTree(Move* currentMove) {
 
     if(currentMove->gameResult == -1) {
         int gameResult = -1;
+        bool userCanWin = false;
+        bool userCanTie = false;
+        bool computerCanWin = false;
+        bool computerCanTie = false;
         for(int i = 0; i < currentMove->children.size(); ++i) {
             Move* nextMove = currentMove->children[i];
             if(nextMove->gameResult == -1) {
                 compressTree(nextMove);
             }
 
-            if(nextMove->gameResult > gameResult && currentMove->whoseMove == 1) {
-                gameResult = nextMove->gameResult;
+            if(nextMove->gameResult == 2) {
+                userCanWin = true;
+            } 
+
+            if(nextMove->gameResult == 0) {
+                computerCanWin = true;
+            }
+
+            if(nextMove->whoseMove == 0 && (nextMove->gameResult == 1 || nextMove->gameResult == -1)) {
+                computerCanTie = true;
+            }
+
+            if(nextMove->whoseMove == 1 && (nextMove->gameResult == 1 || nextMove->gameResult == -1)) {
+                userCanTie = true;
             }
         }
+
+        if(currentMove->whoseMove == 0) {
+            if(computerCanWin && !userCanTie) {
+                gameResult = 0;
+            } 
+
+            if(userCanWin) {
+                gameResult = 2;
+            }
+        }
+
+        if(currentMove->whoseMove == 1) {
+            if(userCanWin && !computerCanTie) {
+                gameResult = 2;
+            }
+
+            if(computerCanWin) {
+                gameResult = 0;
+            }
+        }
+
         currentMove->gameResult = gameResult;
     }
 
@@ -54,8 +91,8 @@ void Move_Tree::fillTree(Move* lastMove) {
             newMove->whoseMove = 0;
         }
         
-        assignVictoryToMove(newMove);
         lastMove->children.push_back(newMove);
+        assignVictoryToMove(newMove);
 
         if(newMove->gameResult == -1) {
             fillTree(newMove);
@@ -185,8 +222,9 @@ void AI::buildMoveTree() {
 vector<int> Move_Tree::makeBestMove() {
     vector<int> move;
     vector<Move*> possibleMoves = root->children;
+
     for(int i = 0; i < possibleMoves.size(); ++i) {
-        if(possibleMoves[i]->gameResult == 0) {
+        if(possibleMoves[i]->gameResult == 0 || (possibleMoves[i]->row == 1 && possibleMoves[i]->column == 1)) {
             move.push_back(possibleMoves[i]->row);
             move.push_back(possibleMoves[i]->column);
             return move;
